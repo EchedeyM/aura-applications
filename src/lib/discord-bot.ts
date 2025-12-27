@@ -115,11 +115,13 @@ async function sendDirectMessageInternal(userId: string, status: 'approved' | 'd
     });
   }
 
-  embed.setFooter({
-    text: applicationConfig.discordBot.footerText,
-    iconURL: applicationConfig.discordBot.serverIcon
-  })
-  .setTimestamp();
+  if (applicationConfig.discordBot.footerText) {
+    embed.setFooter({
+      text: applicationConfig.discordBot.footerText,
+      iconURL: applicationConfig.discordBot.serverIcon
+    });
+  }
+  embed.setTimestamp();
 
   if (status === 'approved') {
     embed.addFields({

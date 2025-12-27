@@ -206,6 +206,43 @@ const FormSection = ({
         ))}
       </div>
     )}
+
+    {section.id === 'background' && (
+      <div className="space-y-6">
+        {section.fields.map((field) => (
+          <FormField
+            key={field.name}
+            control={form.control}
+            name={field.name}
+            render={({ field: formField }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium">{field.label}</FormLabel>
+                <FormControl>
+                  {field.type === 'textarea' ? (
+                    <Textarea
+                      placeholder={field.placeholder}
+                      className="min-h-[120px] bg-background resize-none"
+                      {...formField}
+                    />
+                  ) : (
+                    <Input
+                      placeholder={field.placeholder}
+                      className="bg-background text-sm"
+                      {...formField}
+                    />
+                  )}
+                </FormControl>
+                <FormDescription className="text-xs flex justify-between">
+                  <span>{field.description}</span>
+                  {field.minLength && <CharacterCount current={formField.value.length} required={field.minLength} />}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
+      </div>
+    )}
   </motion.div>
 )
 
