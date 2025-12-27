@@ -70,11 +70,19 @@ const generateFormSchema = () => {
             fieldSchema = (fieldSchema as z.ZodString).min(field.minLength, field.validationMessage)
           }
           break
+        case 'checkbox':
+          fieldSchema = z.boolean()
+          if (field.required) {
+            fieldSchema = (fieldSchema as z.ZodBoolean).refine(val => val === true, {
+              message: field.validationMessage || 'This field is required'
+            })
+          }
+          break
         default:
           fieldSchema = z.string()
       }
 
-      schema[field.name] = field.required ? fieldSchema : fieldSchema.optional()
+      schema[field.name] = field.required && field.type !== 'checkbox' ? fieldSchema : field.required && field.type === 'checkbox' ? fieldSchema : fieldSchema.optional()
     })
   })
 
@@ -84,10 +92,16 @@ const generateFormSchema = () => {
 const formSchema = generateFormSchema()
 
 const generateDefaultValues = () => {
-  const defaults: Record<string, string | number> = {}
+  const defaults: Record<string, string | number | boolean> = {}
   applicationConfig.sections.forEach(section => {
     section.fields.forEach(field => {
-      defaults[field.name] = field.type === 'number' ? getMinimumAge() : ''
+      if (field.type === 'number') {
+        defaults[field.name] = getMinimumAge()
+      } else if (field.type === 'checkbox') {
+        defaults[field.name] = false
+      } else {
+        defaults[field.name] = ''
+      }
     })
   })
   return defaults
@@ -236,6 +250,35 @@ const FormSection = ({
                   <span>{field.description}</span>
                   {field.minLength && <CharacterCount current={formField.value.length} required={field.minLength} />}
                 </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
+      </div>
+    )}
+
+    {section.id === 'rules' && (
+      <div className="space-y-6">
+        {section.fields.map((field) => (
+          <FormField
+            key={field.name}
+            control={form.control}
+            name={field.name}
+            render={({ field: formField }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <input
+                    type="checkbox"
+                    checked={formField.value}
+                    onChange={(e) => formField.onChange(e.target.checked)}
+                    className="mt-1"
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-sm font-medium cursor-pointer">{field.label}</FormLabel>
+                  <FormDescription className="text-xs">{field.description}</FormDescription>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

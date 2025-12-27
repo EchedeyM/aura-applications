@@ -35,10 +35,18 @@ type Application = {
   timestamp: string
   username: string
   age: number
-  steamId: string
-  cfxAccount: string
   experience: string
+  birthplace: string
+  occupation: string
+  education?: string
+  qualities: string
+  criminalRecord: string
+  characterName: string
+  description: string
   character: string
+  motivation: string
+  weaknesses: string
+  rulesAccepted: boolean
   discord: DiscordUser
   status?: 'pending' | 'approved' | 'denied'
 }
@@ -166,8 +174,8 @@ export default function AdminApplications() {
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight mb-2">Applications</h1>
-          <p className="text-muted-foreground">Review and manage whitelist applications</p>
+          <h1 className="text-4xl font-bold tracking-tight mb-2">Solicitudes</h1>
+          <p className="text-muted-foreground">Revisa y gestiona las solicitudes de whitelist</p>
         </div>
         <div className="flex gap-2">
           <Link href="/admin/archive">
@@ -175,7 +183,7 @@ export default function AdminApplications() {
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
               </svg>
-              Archive
+              Archivo
             </Button>
           </Link>
           <Link href="/">
@@ -183,7 +191,7 @@ export default function AdminApplications() {
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              Home
+              Inicio
             </Button>
           </Link>
         </div>
@@ -195,8 +203,8 @@ export default function AdminApplications() {
             <svg className="w-16 h-16 text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="text-lg font-semibold mb-2">No pending applications</h3>
-            <p className="text-sm text-muted-foreground">New applications will appear here</p>
+            <h3 className="text-lg font-semibold mb-2">No hay solicitudes pendientes</h3>
+            <p className="text-sm text-muted-foreground">Las nuevas solicitudes aparecerán aquí</p>
           </CardContent>
         </Card>
       ) : (
@@ -235,57 +243,109 @@ export default function AdminApplications() {
                       <div className="lg:col-span-2 space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Age</p>
-                            <p className="text-base font-medium">{app.age} years old</p>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Edad</p>
+                            <p className="text-base font-medium">{app.age} años</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Steam ID</p>
-                            <p className="text-base font-mono text-sm">{app.steamId}</p>
-                          </div>
-                          <div className="space-y-1 sm:col-span-2">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">CFX Account</p>
-                            <a href={app.cfxAccount} target="_blank" rel="noopener noreferrer" className="text-base text-primary hover:underline break-all">
-                              {app.cfxAccount}
-                            </a>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nombre del Personaje</p>
+                            <p className="text-base font-medium">{app.characterName || 'No especificado'}</p>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-3">
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Roleplay Experience</p>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Experiencia Previa en RP</p>
                             <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
-                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.experience}</p>
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.experience || 'No especificada'}</p>
                             </div>
                           </div>
-                          
+
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Character Backstory</p>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Lugar de Nacimiento</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.birthplace}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Ocupación Anterior</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.occupation}</p>
+                            </div>
+                          </div>
+
+                          {app.education && (
+                            <div>
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Nivel Educativo</p>
+                              <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.education}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Cualidades Principales</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.qualities}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Antecedentes Penales</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.criminalRecord}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Descripción Física</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.description}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Historia del Personaje</p>
                             <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
                               <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.character}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Motivación del Personaje</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.motivation}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Debilidades del Personaje</p>
+                            <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{app.weaknesses}</p>
                             </div>
                           </div>
                         </div>
                         
                         <div className="pt-4 space-y-3 border-t border-border/50">
                           <Input
-                            placeholder="Optional reason for approval/denial..."
+                            placeholder="Razón opcional para aprobación/denegación..."
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                             className="bg-background"
                           />
                           <div className="flex gap-3">
-                            <Button 
-                              onClick={() => handleStatusUpdate(app.id, 'approved')} 
+                            <Button
+                              onClick={() => handleStatusUpdate(app.id, 'approved')}
                               className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                               size="lg"
                             >
                               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
-                              Approve
+                              Aprobar
                             </Button>
-                            <Button 
-                              onClick={() => handleStatusUpdate(app.id, 'denied')} 
+                            <Button
+                              onClick={() => handleStatusUpdate(app.id, 'denied')}
                               variant="destructive"
                               className="flex-1"
                               size="lg"
@@ -293,7 +353,7 @@ export default function AdminApplications() {
                               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                               </svg>
-                              Deny
+                              Denegar
                             </Button>
                           </div>
                         </div>

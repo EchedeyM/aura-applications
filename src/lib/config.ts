@@ -3,7 +3,7 @@ export interface FormFieldConfig {
   label: string
   placeholder: string
   description: string
-  type: 'text' | 'number' | 'url' | 'textarea'
+  type: 'text' | 'number' | 'url' | 'textarea' | 'checkbox'
   required: boolean
   minLength?: number
   maxLength?: number
@@ -101,6 +101,15 @@ export const applicationConfig: ApplicationConfig = {
       icon: 'M4 6h16M4 12h16M4 18h16',
       fields: [
         {
+          name: 'characterName',
+          label: 'Nombre del Personaje',
+          placeholder: 'Escribe el nombre de tu personaje',
+          description: 'El nombre que usará tu personaje en el servidor',
+          type: 'text',
+          required: true,
+          minLength: 1,
+        },
+        {
           name: 'birthplace',
           label: 'Lugar de Nacimiento',
           placeholder: 'Ciudad, Estado/País',
@@ -197,6 +206,23 @@ export const applicationConfig: ApplicationConfig = {
         }
       ],
     },
+    {
+      id: 'rules',
+      title: 'Server Rules Agreement',
+      description: 'Confirm you understand our rules',
+      icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+      fields: [
+        {
+          name: 'rulesAccepted',
+          label: 'I have read and agree to follow all server rules',
+          placeholder: '',
+          description: 'You must accept the rules to apply',
+          type: 'checkbox',
+          required: true,
+          validationMessage: 'You must accept the server rules to continue.',
+        }
+      ],
+    }
   ],
 
   messages: {
