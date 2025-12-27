@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from "next-auth/react"
+import type { Session } from "next-auth"
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,6 +10,22 @@ import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { isAdmin } from '@/lib/auth'
 import { motion } from 'framer-motion'
+
+type DiscordUser = {
+  id: string
+  username: string
+  discriminator: string
+  avatar: string
+  banner: string
+  accentColor: number | null
+  verified: boolean
+  email: string
+  createdAt: string
+}
+
+interface ExtendedSession extends Session {
+  discord: DiscordUser
+}
 
 type ArchivedApplication = {
   id: string
@@ -39,15 +56,7 @@ export default function ArchivedApplications() {
   const { toast } = useToast()
   const router = useRouter()
 
-  useEffect(() => {
-    if (status === 'unauthenticated' || (session?.discord && !isAdmin(session.discord.id))) {
-      router.push('/')
-    } else if (status === 'authenticated' && isAdmin(session?.discord?.id)) {
-      fetchArchivedApplications()
-    }
-  }, [status, session, router])
-
-  async function fetchArchivedApplications() {
+  const fetchArchivedApplications = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await fetch('/api/applications/archive')
@@ -66,7 +75,15 @@ export default function ArchivedApplications() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [toast])
+
+  useEffect(() => {
+    if (status === 'unauthenticated' || ((session as ExtendedSession)?.discord && !isAdmin((session as ExtendedSession).discord.id))) {
+      router.push('/')
+    } else if (status === 'authenticated' && isAdmin((session as ExtendedSession)?.discord?.id)) {
+      fetchArchivedApplications()
+    }
+  }, [status, session, router, fetchArchivedApplications])
 
   if (status === 'loading' || isLoading) {
     return (
@@ -76,7 +93,7 @@ export default function ArchivedApplications() {
     )
   }
 
-  if (!session?.discord?.id || !isAdmin(session.discord.id)) {
+  if (!(session as ExtendedSession)?.discord?.id || !isAdmin((session as ExtendedSession).discord.id)) {
     return null
   }
 
@@ -116,7 +133,7 @@ export default function ArchivedApplications() {
             >
               <Card>
                 <CardHeader>
-                  <CardTitle>{app.username}'s Application</CardTitle>
+                  <CardTitle>{app.username}&apos;s Application</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
